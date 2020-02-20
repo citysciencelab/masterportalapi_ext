@@ -11,6 +11,7 @@ import portalConfig from "./config/portal.json";
 import localGeoJSON from "./config/localGeoJSON.js";
 
 const hamburgServicesUrl = "http://geoportal-hamburg.de/lgv-config/services-internet.json";
+const mdIdTest = "9F0CF4ED-A570-4856-B0EC-BBAD5A2E3D0C";
 
 //* Add elements to window to play with API in console
 window.mpapi = {
@@ -29,7 +30,14 @@ const localService = {
     typ: "GeoJSON",
     features: localGeoJSON
 };
+
+//* Fake service that calls layers from hmdk by md_id
+const mdIdService = {
+    md_id: mdIdTest
+};
+
 services.push(localService);
+services.push(mdIdService);
 // */
 
 //* geojson styling function call to override default styling
@@ -51,9 +59,12 @@ window.mpapi.map = mpapi.createMap({
     ...portalConfig,
     layerConf: services
 });
-["2001", "2002"].forEach(id =>
+["2001", "2002", "9F0CF4ED-A570-4856-B0EC-BBAD5A2E3D0C"].forEach(id =>
     window.mpapi.map.addLayer(id)
 );
+
+window.mpapi.createLayer("14DF2C11-AFA8-44E0-9EDD-F0AAB7F17CDB");
+window.mpapi.createLayer({md_id: "27C81813-7572-466C-9200-71704BC9C91E"});
 //*/
 
 /* ASYNCHRONOUS EXAMPLE 1: work with layerConf callback

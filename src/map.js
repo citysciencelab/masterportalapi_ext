@@ -3,23 +3,32 @@ import {defaults as olDefaultInteractions} from "ol/interaction.js";
 
 import setBackgroundImage from "./lib/setBackgroundImage";
 import getInitialLayers from "./lib/getInitialLayers";
+import layerBuilderMap from "./layerBuilderMap";
 import defaults from "./defaults";
-import * as wms from "./layer/wms";
-import * as geojson from "./layer/geojson";
+import createLayer from "./lib/createLayer";
 import {createMapView} from "./mapView";
 import {initializeLayerList, getLayerWhere} from "./rawLayerList";
 import {registerProjections} from "./crs";
 import {setGazetteerUrl} from "./searchAddress";
 
+const originalAddLayer = PluggableMap.prototype.addLayer;
+
 /**
- * lookup for layer constructors
- * @ignore
+ * sets the layer properties
+ * @param {*} layer the layer object
+ * @param {*} params params to set on the layer, such as visibility or transparency
+ * @returns {Layer} returns the layer
  */
-const layerBuilderMap = {
-        wms: wms,
-        geojson: geojson
-    },
-    originalAddLayer = PluggableMap.prototype.addLayer;
+function setLayerState (layer, params) {
+    if (params.visibility) {
+        layer.setVisible(typeof params.visibility === "boolean" ? params.visibility : true);
+    }
+    if (params.transparency) {
+        layer.setOpacity(typeof params.transparency === "number" ? (100 - params.transparency) / 100 : 1);
+    }
+
+    return layer;
+}
 
 /**
  * Adds a layer to the map, or adds a layer to the map by id.
@@ -39,24 +48,28 @@ function addLayer (layerOrId, params = {visibility: true, transparency: 0}) {
     var layer, layerBuilder;
 
     // if parameter is id, create and add layer with masterportalAPI mechanisms
-    if (typeof layerOrId === "string") {
+    if (typeof layerOrId === "string" && !layerOrId.includes("-")) {
         const rawLayer = getLayerWhere({id: layerOrId});
 
         if (!rawLayer) {
             console.error("Layer with id '" + layerOrId + "' not found. No layer added to map.");
             return null;
         }
-        layerBuilder = layerBuilderMap[rawLayer.typ.toLowerCase()];
+        layerBuilder = layerBuilderMap(rawLayer.typ);
         if (!layerBuilder) {
             console.error("Layer with id '" + layerOrId + "' has unknown type '" + rawLayer.typ + "'. No layer added to map.");
             return null;
         }
 
         layer = layerBuilder.createLayer(rawLayer, {map: this});
-        layer.setVisible(typeof params.visibility === "boolean" ? params.visibility : true);
-        layer.setOpacity(typeof params.transparency === "number" ? (100 - params.transparency) / 100 : 1);
+        setLayerState(layer, params);
         originalAddLayer.call(this, layer);
         return layer;
+    }
+    // if parameter is md_id, fetch service from HMDK and add layer
+    else if (typeof layerOrId === "string" && layerOrId.includes("-")) {
+        createLayer(layerOrId);
+        return null;
     }
 
     // else use original function

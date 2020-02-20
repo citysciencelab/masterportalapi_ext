@@ -68,7 +68,7 @@ export function getLayerList () {
 
 /**
  * Returns display names map for a layer, or display name for a specific attribute.
- * @param {string} layerId - if of layer to fetch display names for
+ * @param {string} layerId - id of layer to fetch display names for
  * @param {string} [featureAttribute] - if given, only one entry of map is returned
  * @returns {?(object|string)} - map of originalName->displayName or name of featureAttribute if specified; if layer or featureAttribute not found, null
  */
@@ -85,4 +85,13 @@ export function getDisplayNamesOfFeatureAttributes (layerId, featureAttribute) {
     }
 
     return null;
+}
+
+/**
+ * Adds a new rawLayer Object to the rawLayerList, called when a remote Layer is added
+ * @param {*} rawLayer - the rawLayer Object, as defined in the services.json
+ * @returns {void}
+ */
+export function addToLayerList (rawLayer) {
+    layerList.push(rawLayer);
 }
