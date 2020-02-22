@@ -10,7 +10,7 @@ import layerBuilderMap from "../layerBuilderMap";
  * @param {*} url - todo
  * @returns {Promise} todo
  */
-export function createLayer (layerConfig, {map, layerStyle} = {}, url = defaults.layerConf) {
+export function getRawLayer (layerConfig, {map, layerStyle} = {}, url = defaults.layerConf) {
     return new Promise((res, rej) => {
         const layers = [];
         let rawLayers = [];
@@ -67,6 +67,6 @@ export default function (layerConfig, url = defaults.layerConf) {
         window.mpapi.map.addLayer(rawLayer.id);
     }
     else {
-        createLayer(rawLayer, {}, url);
+        getRawLayer(rawLayer, {}, url);
     }
 }

@@ -12,6 +12,7 @@ import {registerProjections} from "./crs";
 import {setGazetteerUrl} from "./searchAddress";
 
 const originalAddLayer = PluggableMap.prototype.addLayer;
+const originalRemoveLayer = PluggableMap.prototype.removeLayer;
 
 /**
  * sets the layer properties
@@ -76,7 +77,17 @@ function addLayer (layerOrId, params = {visibility: true, transparency: 0}) {
     return originalAddLayer.call(this, layerOrId);
 }
 
+function removeLayer(layerOrId) {
+    let layer = layerOrId;
+
+    if (typeof layer === "string") {
+        layer = this.getLayers().getArray().find(olLayer => olLayer.get("id") === layer);
+    }
+    originalRemoveLayer.call(this, layer);
+}
+
 PluggableMap.prototype.addLayer = addLayer;
+PluggableMap.prototype.removeLayer = removeLayer;
 
 /**
  * Creates an openlayers map according to configuration. Does not set many default values itself, but uses function that do.
