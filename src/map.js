@@ -11,14 +11,14 @@ import {initializeLayerList, getLayerWhere} from "./rawLayerList";
 import {registerProjections} from "./crs";
 import {setGazetteerUrl} from "./searchAddress";
 
-const originalAddLayer = PluggableMap.prototype.addLayer;
-const originalRemoveLayer = PluggableMap.prototype.removeLayer;
+const originalAddLayer = PluggableMap.prototype.addLayer,
+    originalRemoveLayer = PluggableMap.prototype.removeLayer;
 
 /**
- * sets the layer properties
- * @param {*} layer the layer object
- * @param {*} params params to set on the layer, such as visibility or transparency
- * @returns {Layer} returns the layer
+ * Sets the properties of the layer provided
+ * @param {ol/Layer} layer - the layer object
+ * @param {object} params - params to set on the layer, such as visibility or transparency
+ * @returns {ol/Layer} returns the original layer
  */
 function setLayerState (layer, params) {
     if (params.visibility) {
@@ -77,7 +77,15 @@ function addLayer (layerOrId, params = {visibility: true, transparency: 0}) {
     return originalAddLayer.call(this, layerOrId);
 }
 
-function removeLayer(layerOrId) {
+/**
+ * Removes a layer from the map, or removes a layer from the map by id.
+ * This id is looked up within the array of all layers on the specified map.
+ *
+ * This function is available on all ol/Map instances.
+ * @param {(string|ol/Layer)} layerOrId - id or layer to remove from map
+ * @returns {?ol/Layer} the removed layer
+ */
+function removeLayer (layerOrId) {
     let layer = layerOrId;
 
     if (typeof layer === "string") {
@@ -86,6 +94,7 @@ function removeLayer(layerOrId) {
     originalRemoveLayer.call(this, layer);
 }
 
+/** Replace original ol/PluggableMap methods */
 PluggableMap.prototype.addLayer = addLayer;
 PluggableMap.prototype.removeLayer = removeLayer;
 

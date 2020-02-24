@@ -4,11 +4,15 @@ import makeRequest from "./makeRequest";
 import layerBuilderMap from "../layerBuilderMap";
 
 /**
- * todo
- * @param {*} layerConfig - todo
- * @param {*} param1 - todo
- * @param {*} url - todo
- * @returns {Promise} todo
+ * Retrieves an array of rawLayer-objects from a given services-url by any set of attributes
+ * Takes any kind of attribute, if "md-id" is provided it is looked up from the "dataset" property on the rawLayer
+ * @todo rewrite filter function to recursively scan the rawLayer
+ * @param {object} layerConfig - the attributes (key/value) to search for in provided services.json
+ * @param {object} [param={}] - parameter object
+ * @param {ol.Map} [param.map] - map the geojson is to be projected on
+ * @param {ol.Style} [param.layerStyle] - optional style; if not given, default styling (modifiable by setCustomStyles) is used
+ * @param {String} [url="https://geoportal-hamburg.de/lgv-config/services-internet.json"] - the URL to fetch the services from
+ * @returns {Promise} the Promise resolving the Array of rawLayers to create the ol/Layer for
  */
 export function getRawLayer (layerConfig, {map, layerStyle} = {}, url = defaults.layerConf) {
     return new Promise((res, rej) => {

@@ -1,3 +1,9 @@
+/**
+ * Creates and executes a GET Request to a given URL
+ * @todo extend to allow all CRUD Methods (GET, POST, PUT, DELETE)
+ * @param {*} url - the URL to request from
+ * @returns {Promise} the http request as a Promise
+ */
 export default function (url) {
     return new Promise((res, rej) => {
         const Http = new XMLHttpRequest();

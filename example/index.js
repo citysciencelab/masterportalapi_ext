@@ -59,12 +59,82 @@ window.mpapi.map = mpapi.createMap({
     ...portalConfig,
     layerConf: services
 });
+
+/**
+ * Add additional Layers to the map
+ * The layer can by passed as rawLayer-"id", "md_id" or ol/Layer object
+ * "id": the layer is generated based on the rawLayer-Parameters
+ * "md_id": refers to a dataset ID from the HDMK
+ * 
+ * The example md_id refers to all parcels (Flurstücke) in der FHH
+ */
 ["2001", "2002", "9F0CF4ED-A570-4856-B0EC-BBAD5A2E3D0C"].forEach(id =>
     window.mpapi.map.addLayer(id)
 );
 
+/**
+ * Additional Layers can also be generated without being included in the portalConfig in advance
+ * Parameter can either be an md_id for lookup in HDMK, if multiple layers refer to the same md_id, all are added
+ * an object specifying the attributes to search for
+ * or a rawLayer-Object, as retrieved from the default services.json
+ */
+// Golfplätze Metropolregion Hamburg
 window.mpapi.createLayer("14DF2C11-AFA8-44E0-9EDD-F0AAB7F17CDB");
+
+// Nahversorgung Eimsbüttel
 window.mpapi.createLayer({md_id: "27C81813-7572-466C-9200-71704BC9C91E"});
+
+// Feinkartierung Straßen Wandsbek
+window.mpapi.createLayer({
+    "id": "14864",
+    "name": "Kataster Nutzung Wandsbek",
+    "url": "https://geodienste.hamburg.de/HH_WMS_Feinkartierung_Strasse",
+    "typ": "WMS",
+    "layers": "b_wands_mr_feinkartierung_flaechen",
+    "format": "image/png",
+    "version": "1.3.0",
+    "singleTile": false,
+    "transparent": true,
+    "transparency": 0,
+    "tilesize": 512,
+    "gutter": 0,
+    "minScale": "0",
+    "maxScale": "2500000",
+    "infoFormat": "text/xml",
+    "gfiAttributes": {
+        "bezirksnummer": "Bezirksnummer",
+        "strassenname": "Strassenname",
+        "strassentyp": "Strassentyp",
+        "stadtteil": "Stadtteil",
+        "nutzung": "Nutzung",
+        "kategorie": "Kategorie",
+        "inhalt": "Inhalt"
+    },
+    "gfiTheme": "default",
+    "gfiComplex": "false",
+    "layerAttribution": "nicht vorhanden",
+    "legendURL": "",
+    "cache": false,
+    "featureCount": 1,
+    "datasets": [
+        {
+            "md_id": "A02FCB1D-8B20-4937-BC9A-235D736B8569",
+            "csw_url": "https://metaver.de/csw",
+            "show_doc_url": "https://metaver.de/trefferanzeige?cmd=doShowDocument&docuuid=",
+            "rs_id": "https://registry.gdi-de.org/id/de.hh/ad7e3cb6-9a9e-4044-81b1-4c1f8d974c2f",
+            "md_name": "Feinkartierung Straße Hamburg",
+            "bbox": "461468.97,5916367.23,587010.91,5980347.76",
+            "kategorie_opendata": [
+                "Transport und Verkehr",
+                "Infrastruktur, Bauen und Wohnen"
+            ],
+            "kategorie_inspire": [
+                "kein INSPIRE-Thema"
+            ],
+            "kategorie_organisation": "Bezirksamt Hamburg-Mitte"
+        }
+    ]
+});
 //*/
 
 /* ASYNCHRONOUS EXAMPLE 1: work with layerConf callback
