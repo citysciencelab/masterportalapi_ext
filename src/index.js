@@ -7,9 +7,11 @@ import * as geojson from "./layer/geojson";
 import * as layerLib from "./layer/lib";
 import {search, setGazetteerUrl} from "./searchAddress";
 import setBackgroundImage from "./lib/setBackgroundImage";
+import createLayer from "./lib/createLayer";
 
 export {
     createMap,
+    createLayer,
     createMapView,
     wms,
     geojson,
